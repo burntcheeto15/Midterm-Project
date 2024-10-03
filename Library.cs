@@ -63,7 +63,9 @@ namespace Midterm_Project
             Console.WriteLine(" 6 - Sort Library by Pages");
             Console.WriteLine(" 7 - Check Out Book");
             Console.WriteLine(" 8 - Return Book");
-            Console.WriteLine(" 9 - Quit");
+            Console.WriteLine(" 9 - Sort Library by Title");
+            Console.WriteLine(" 10 - Donate Book");
+            Console.WriteLine(" 11 - Quit");
             Console.WriteLine();
 
             
@@ -102,7 +104,16 @@ namespace Midterm_Project
                 {
                     returnBook(library);
                 }
-                if(menuChoice == 9)
+                if( menuChoice == 9)
+                {
+                    sortByTitle(library);
+                }
+                if (menuChoice == 10)
+                {
+                    //Still Have to do This
+                    //donateBook(library);
+                }
+                if(menuChoice == 11)
                 {
                     Environment.Exit(0);
                 }
@@ -252,6 +263,8 @@ namespace Midterm_Project
             }
         }
 
+
+        //Need to fix this sorting too
         public static void printByPageLength(Book[] library)
         {
             Console.Clear();
@@ -276,6 +289,47 @@ namespace Midterm_Project
                     (library[indexOfMin], library[i]) = (library[i], library[indexOfMin]);
                 }
             
+
+            for (int i = 0; i < GetLineCount(file) - 1; i++)
+            {
+                Console.WriteLine(library[i]);
+            }
+
+            Console.WriteLine();
+            Console.WriteLine(" 1 - Return");
+            int returnMenu = int.Parse(Console.ReadLine());
+
+            if (returnMenu == 1)
+            {
+                openMenu(library);
+            }
+        }
+
+        //Need to fix this sorting
+        public static void sortByTitle(Book[] library)
+        {
+            Console.Clear();
+            const string file = "Library Books.csv";
+            Console.WriteLine("Books in the Library: ");
+            int minPage = library[0].PageLength;
+            int indexOfMin = 0;
+
+
+            for (int i = 0; i < library.Length - 1; i++)
+            {
+                minPage = library[i].PageLength;
+                for (int j = i; j < library.Length; j++)
+                {
+                    if (library[j].PageLength < minPage)
+                    {
+                        minPage = library[j].PageLength;
+                        indexOfMin = j;
+                    }
+                    Console.WriteLine(minPage + ":" + indexOfMin);
+                }
+                (library[indexOfMin], library[i]) = (library[i], library[indexOfMin]);
+            }
+
 
             for (int i = 0; i < GetLineCount(file) - 1; i++)
             {
@@ -337,6 +391,8 @@ namespace Midterm_Project
             if(returnMenu == 1)
             {
                 pickedBook.CheckedOut = true;
+                Console.WriteLine();
+                Console.WriteLine($"Book Due Date is {DateTime.Now.AddDays(14)}");
             }
             else
             {
