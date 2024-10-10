@@ -7,7 +7,7 @@ namespace Midterm_Project
 {
     public class Library
     {
-        
+
         private static void Main()
         {
             const string file = "Library Books.csv";
@@ -16,7 +16,7 @@ namespace Midterm_Project
                 Console.WriteLine("File doesn't Exist");
             }
             int lineCount = GetLineCount(file);
-            
+
             Book[] library = new Book[lineCount - 1];
             try
             {
@@ -68,9 +68,9 @@ namespace Midterm_Project
             Console.WriteLine(" 11 - Quit");
             Console.WriteLine();
 
-            
-                int menuChoice = int.Parse(Console.ReadLine());
-            if (menuChoice < 10 && menuChoice > 0)
+
+            int menuChoice = int.Parse(Console.ReadLine());
+            if (menuChoice < 11 && menuChoice > 0)
             {
                 if (menuChoice == 1)
                 {
@@ -88,23 +88,23 @@ namespace Midterm_Project
                 {
                     searchYear(library);
                 }
-                if(menuChoice == 5)
+                if (menuChoice == 5)
                 {
                     searchTitle(library);
                 }
-                if(menuChoice == 6)
+                if (menuChoice == 6)
                 {
                     printByPageLength(library);
                 }
-                if(menuChoice == 7)
+                if (menuChoice == 7)
                 {
                     checkoutBook(library);
                 }
-                if(menuChoice == 8)
+                if (menuChoice == 8)
                 {
                     returnBook(library);
                 }
-                if( menuChoice == 9)
+                if (menuChoice == 9)
                 {
                     sortByTitle(library);
                 }
@@ -112,8 +112,9 @@ namespace Midterm_Project
                 {
                     //Still Have to do This
                     //donateBook(library);
+                    donateBook(library);
                 }
-                if(menuChoice == 11)
+                if (menuChoice == 11)
                 {
                     Environment.Exit(0);
                 }
@@ -151,7 +152,7 @@ namespace Midterm_Project
             Console.WriteLine("Books Avaiable: ");
             for (int i = 0; i < GetLineCount(file) - 1; i++)
             {
-                if (library[i].CheckedOut == true)
+                if (library[i].CheckedOut == false)
                 {
                     Console.WriteLine(library[i]);
                 }
@@ -178,7 +179,7 @@ namespace Midterm_Project
             Console.WriteLine($"Books by {authorSearch}: ");
             for (int i = 0; i < GetLineCount(file) - 1; i++)
             {
-                if (library[i].Author.Equals(authorSearch))
+                if (library[i].Author.ToLower().Equals(authorSearch.ToLower()))
                 {
                     Console.WriteLine(library[i]);
                 }
@@ -193,7 +194,7 @@ namespace Midterm_Project
             {
                 openMenu(library);
             }
-            if(returnMenu == 2)
+            if (returnMenu == 2)
             {
                 searchAuthor(library);
             }
@@ -242,7 +243,7 @@ namespace Midterm_Project
             Console.WriteLine($"Books called {titleSearch}: ");
             for (int i = 0; i < GetLineCount(file) - 1; i++)
             {
-                if (library[i].Title.Equals(titleSearch))
+                if (library[i].Title.ToLower().Equals(titleSearch.ToLower()))
                 {
                     Console.WriteLine(library[i]);
                 }
@@ -270,47 +271,15 @@ namespace Midterm_Project
             Console.Clear();
             const string file = "Library Books.csv";
             Console.WriteLine("Books in the Library: ");
-            int minPage = library[0].PageLength;
-            int indexOfMin = 0;
-            
 
-                for (int i = 0; i < library.Length - 1; i++)
-                {
-                    minPage = library[i].PageLength;
-                    for (int j = i; j < library.Length; j++)
-                    {
-                        if (library[j].PageLength < minPage)
-                        {
-                            minPage = library[j].PageLength;
-                            indexOfMin = j;
-                        }
-                    Console.WriteLine(minPage + ":" + indexOfMin);
-                    }
-                    (library[indexOfMin], library[i]) = (library[i], library[indexOfMin]);
-                }
-            
+            var sortedBooks = library.OrderBy(book => book.PageLength);
 
-            for (int i = 0; i < GetLineCount(file) - 1; i++)
+            Console.WriteLine("Books sorted by page count:");
+            foreach (var book in sortedBooks)
             {
-                Console.WriteLine(library[i]);
+                Console.WriteLine($"{book.PageLength} pages {book.Title} by {book.Author}, ({book.YearPublished}) | Genre: {book.Genre} | Checked Out: {book.CheckedOut}");
             }
-
-            Console.WriteLine();
-            Console.WriteLine(" 1 - Return");
-            int returnMenu = int.Parse(Console.ReadLine());
-
-            if (returnMenu == 1)
-            {
-                openMenu(library);
-            }
-        }
-
-        //Need to fix this sorting
-        public static void sortByTitle(Book[] library)
-        {
-            Console.Clear();
-            const string file = "Library Books.csv";
-            Console.WriteLine("Books in the Library: ");
+            /*
             int minPage = library[0].PageLength;
             int indexOfMin = 0;
 
@@ -337,7 +306,56 @@ namespace Midterm_Project
             }
 
             Console.WriteLine();
-            Console.WriteLine(" 1 - Return");
+            */
+            Console.WriteLine("\n 1 - Return");
+            int returnMenu = int.Parse(Console.ReadLine());
+
+            if (returnMenu == 1)
+            {
+                openMenu(library);
+            }
+        }
+
+        //Need to fix this sorting
+        public static void sortByTitle(Book[] library)
+        {
+            Console.Clear();
+            const string file = "Library Books.csv";
+            Console.WriteLine("Books in the Library: ");
+            int minPage = library[0].PageLength;
+            int indexOfMin = 0;
+
+            var sortedBooks = library.OrderBy(book => book.Title);
+
+            Console.WriteLine("Books sorted by page count:");
+            foreach (var book in sortedBooks)
+            {
+                Console.WriteLine($"{book.Title} by {book.Author}, ({book.YearPublished}) | Genre: {book.Genre} {book.PageLength} pages | Checked Out: {book.CheckedOut}");
+            }
+            /*
+            for (int i = 0; i < library.Length - 1; i++)
+            {
+                minPage = library[i].PageLength;
+                for (int j = i; j < library.Length; j++)
+                {
+                    if (library[j].PageLength < minPage)
+                    {
+                        minPage = library[j].PageLength;
+                        indexOfMin = j;
+                    }
+                    Console.WriteLine(minPage + ":" + indexOfMin);
+                }
+                (library[indexOfMin], library[i]) = (library[i], library[indexOfMin]);
+            }
+
+
+            for (int i = 0; i < GetLineCount(file) - 1; i++)
+            {
+                Console.WriteLine(library[i]);
+            }
+            */
+            Console.WriteLine();
+            Console.WriteLine("\n 1 - Return");
             int returnMenu = int.Parse(Console.ReadLine());
 
             if (returnMenu == 1)
@@ -388,7 +406,7 @@ namespace Midterm_Project
             Console.WriteLine("2 - No");
             int returnMenu = int.Parse(Console.ReadLine());
 
-            if(returnMenu == 1)
+            if (returnMenu == 1)
             {
                 pickedBook.CheckedOut = true;
                 Console.WriteLine();
@@ -427,6 +445,35 @@ namespace Midterm_Project
             Console.WriteLine(" 0 - Return to Menu");
             int returnMenu = int.Parse(Console.ReadLine());
 
+            if (returnMenu == 0)
+            {
+                openMenu(library);
+            }
+        }
+
+        public static void donateBook(Book[] library)
+        {
+            Console.Clear();
+            const string file = "Library Books.csv";
+            Console.WriteLine("Donate a Book");
+            Console.Write("Enter the author's name: ");
+            string author = Console.ReadLine();
+            Console.Write("Enter the book title: ");
+            string title = Console.ReadLine();
+            Console.Write("Enter the year published: ");
+            int yearPublished = int.Parse(Console.ReadLine());
+            Console.Write("Enter the genre: ");
+            string genre = Console.ReadLine();
+            Console.Write("Enter the amount of pages: ");
+            int pageCount = int.Parse(Console.ReadLine());
+            Book newBook = new Book(title, author, genre, pageCount, yearPublished, false);
+            using (StreamWriter writer = new StreamWriter(file, true))
+            {
+                writer.WriteLine($"{newBook.Author},{newBook.Title},{newBook.YearPublished},{newBook.Genre},{newBook.PageLength},{newBook.CheckedOut}");
+            }
+            Console.WriteLine("Thank you for donating!");
+            Console.WriteLine("\n 0 - Return");
+            int returnMenu = int.Parse(Console.ReadLine());
             if (returnMenu == 0)
             {
                 openMenu(library);

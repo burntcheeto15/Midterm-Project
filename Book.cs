@@ -13,12 +13,12 @@ namespace Midterm_Project
         private bool checkedOut;
         public Book(string title, string author, string genre, int pageLength, int yearPublished, bool checkedOut)
         {
-            title = Title;
-            author = Author;
-            genre = Genre;
-            pageLength = PageLength;
-            yearPublished = YearPublished;
-            checkedOut = CheckedOut;
+            Title = title;
+            Author = author;
+            Genre = genre;
+            PageLength = pageLength;
+            YearPublished = yearPublished;
+            CheckedOut = checkedOut;
         }
 
         public override string ToString()
