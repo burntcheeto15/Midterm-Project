@@ -70,7 +70,7 @@ namespace Midterm_Project
 
 
             int menuChoice = int.Parse(Console.ReadLine());
-            if (menuChoice < 11 && menuChoice > 0)
+            if (menuChoice < 12 && menuChoice > 0)
             {
                 if (menuChoice == 1)
                 {
@@ -121,7 +121,7 @@ namespace Midterm_Project
             }
             else
             {
-                throw new Exception("Input must be 1-9");
+                throw new Exception("Input must be 1-10");
             }
         }
 
@@ -130,7 +130,7 @@ namespace Midterm_Project
             Console.Clear();
             const string file = "Library Books.csv";
             Console.WriteLine("Books in the Library: ");
-            for (int i = 0; i < GetLineCount(file) - 1; i++)
+            for (int i = 0; i < library.Length; i++)
             {
                 Console.WriteLine(library[i]);
             }
@@ -172,7 +172,7 @@ namespace Midterm_Project
         {
             Console.Clear();
             const string file = "Library Books.csv";
-            Console.Write("Search Auhtor's Last Name: ");
+            Console.Write("Search Author's Last Name: ");
             string authorSearch = Console.ReadLine();
             Console.WriteLine();
 
@@ -471,12 +471,18 @@ namespace Midterm_Project
             {
                 writer.WriteLine($"{newBook.Author},{newBook.Title},{newBook.YearPublished},{newBook.Genre},{newBook.PageLength},{newBook.CheckedOut}");
             }
+            Book[] newLibrary = new Book[library.Length + 1];
+            for (int i = 0; i < library.Length; i++)
+            {
+                newLibrary[i] = library[i];
+            }
+            newLibrary[library.Length] = newBook;
             Console.WriteLine("Thank you for donating!");
             Console.WriteLine("\n 0 - Return");
             int returnMenu = int.Parse(Console.ReadLine());
             if (returnMenu == 0)
             {
-                openMenu(library);
+                openMenu(newLibrary);
             }
         }
 
