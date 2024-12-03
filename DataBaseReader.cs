@@ -7,6 +7,10 @@ public static class DataBaseReader
     public static List<object> LoadDatabase(string filePath)
     {
         var database = new List<object>();
+        if (!File.Exists(filePath))
+        {
+            throw new FileNotFoundException("File does not exist", filePath);
+        }
         foreach (var line in File.ReadLines(filePath))
         {
             var columns = line.Split(',');
