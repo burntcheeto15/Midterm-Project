@@ -1,0 +1,21 @@
+"track","Siamese Dream","The Smashing Pumpkins","Siamese Dream",1993,3.35,4
+"track","Smells Like Teen Spirit","Nirvana","Nevermine",1991,4.25,5
+"track","The Freshman","The Vervre Pipe","Villains",1996,5.06,4
+"track","Where The Streets Have No Name","U2","The Joshua Tree",1987,6.15,4
+"track","Knights Of Cyndonia","Muse","Black Holes and Revelations",2006,3.19,5
+"track","Resistance","Muse","The Resistance",2009,3.24,5
+"track","Master of Puppets","Metallica","Master of Puppets",1986,4.01,2
+"track","Battery","Metallica","Master of Puppets",1986,4.57,3
+"track","Enter Sandman","Metallica","Metallica",1991,3.14,2
+"track","Evil Angel","Breaking Benjamin","Phobia",2006,4.65,4
+"audiobook","Jurassic Park","Michael Crichton",1990,118.05,261,11
+"audiobook","The Road","Cormac McCarthy",2006,437.15,497,32
+"audiobook","IT","Stephen King",1986,490.63,11567,118
+"audiobook","The Stand","Stephen King",1990,312.32,1009,38
+"audiobook","Cold Fire","Dean Koontz",1992,409.78,733,54
+"podcast","The Dropout","John Carreyrou",2021,58.04,211,33
+"podcast","Darknet Diaries","Jack Rhysider",2023,41.11,156,49
+"podcast","Your Undivided Attention","Tristan Harris",2024,52.34,2017,56
+"podcast","Twenty Thousand Hertz","Dallas Taylor",2023,49.56,2019,85
+"podcast","The JNG Experience","JNG",2024,154.72,2024,19
+
