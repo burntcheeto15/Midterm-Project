@@ -114,17 +114,25 @@ namespace FinalProject
         //Part 3.5 - Print out all entries with a given artist/author/creator (not case sensitive)
         static void SearchByCreator(List<object> database)
         {
-            Console.Write("Enter the name of the artist/author/creator: ");
-            string searchTerm = Console.ReadLine().ToLower();
+            string search = "";
+            while (string.IsNullOrEmpty(search))
+            {
+                Console.Write("Enter the name of the artist/author/creator: ");
+                search = Console.ReadLine().Trim().ToLower();
+                if (string.IsNullOrEmpty(search))
+                {
+                    Console.WriteLine("Input cannot be empty. Please enter a valid name.");
+                }
+            }
 
             var results = database.Where(item =>
             {
                 if (item is Track track)
-                    return track.Artist.ToLower().Contains(searchTerm);
+                    return track.Artist.ToLower().Contains(search);
                 if (item is AudioBook audiobook)
-                    return audiobook.Author.ToLower().Contains(searchTerm);
+                    return audiobook.Author.ToLower().Contains(search);
                 if (item is Podcast podcast)
-                    return podcast.Creator.ToLower().Contains(searchTerm);
+                    return podcast.Creator.ToLower().Contains(search);
                 return false;
             }).ToList();
 
@@ -247,7 +255,7 @@ namespace FinalProject
                     album = ValidStringInput("In what Album?");
                     year = ValidIntegerInput("What Year was it Made?", 1900, DateTime.Now.Year);
                     dur = ValidIntegerInput("Duration in Minutes?", 1, int.MaxValue);
-                    rating = ValidDoubleInput("Rating?", 0, 5);
+                    rating = ValidDoubleInput("Rating (1-5)?", 0, 5);
                     sound = ValidStringInput("Mp3 Name?");
 
                     database.Add(new Track(title, artist, album, year, dur, rating, sound));
@@ -273,7 +281,7 @@ namespace FinalProject
                     artist = ValidStringInput("By Who?");
                     year = ValidIntegerInput("What Year was it Made?", 1900, DateTime.Now.Year);
                     dur = ValidIntegerInput("Duration in Minutes?", 1, int.MaxValue);
-                    pcRating = ValidIntegerInput("Rating?", 0, 10);
+                    pcRating = ValidIntegerInput("Rating (1-10)?", 0, 10);
 
                     database.Add(new Podcast(title, artist, year, dur, pcRating));
                     writer.WriteLine($"Podcast:,{title},{artist},{year},{dur},{pcRating}");
@@ -327,7 +335,7 @@ namespace FinalProject
                
                         if (item is Track track)
                         {
-                            update.WriteLine($"Track:, {track.Title}, {track.Artist}, {track.Album}, {track.Year}, {track.Duration}, {track.Rating}");
+                            update.WriteLine($"Track:, {track.Title}, {track.Artist}, {track.Album}, {track.Year}, {track.Duration}, {track.Rating}, {track.Sound}");
                         }
 
                         if (item is AudioBook book)
@@ -350,6 +358,7 @@ namespace FinalProject
             Console.Clear();
             WindowsMediaPlayer sound = new WindowsMediaPlayer();
             int j = 1;
+
             for (int i = 0; i < database.Count; i++)
             {
                 if (database[i] is Track track)
@@ -358,8 +367,31 @@ namespace FinalProject
                     j++;
                 }
             }
-            Console.WriteLine("What would you like to Play?");
-            object playing = database[int.Parse(Console.ReadLine()) - 1];
+            int trackToPlay = -1;
+            bool validTrackChoice = false;
+
+            while (!validTrackChoice)
+            {
+                Console.WriteLine("What would you like to Play? (Enter the number of the track)");
+
+                if (int.TryParse(Console.ReadLine(), out trackToPlay))
+                {
+                    if (trackToPlay >= 1 && trackToPlay < j)
+                    {
+                        validTrackChoice = true;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Invalid choice. Please enter a number corresponding to the available tracks.");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Invalid input. Please enter a valid track number.");
+                }
+            }
+
+            object playing = database[trackToPlay - 1];
             if (playing is Track t)
             {
                 sound.URL = t.Sound;
@@ -367,13 +399,19 @@ namespace FinalProject
             }
             sound.controls.play();
 
-
-            Console.WriteLine("Press 1 to Stop");
-            if(Console.ReadLine() == "1")
+            string stopInput = "";
+            while (stopInput != "1")
             {
-                sound.controls.stop();
+                Console.WriteLine("Press 1 to stop the audio.");
+                stopInput = Console.ReadLine();
+
+                if (stopInput != "1")
+                {
+                    Console.WriteLine("Invalid input. Please press 1 to stop.");
+                }
             }
-            
+            sound.controls.stop();
+            Console.WriteLine("Audio stopped.");
         }
 
         static string ValidStringInput(string prompt)
