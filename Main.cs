@@ -1,13 +1,19 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
+using WMPLib;
 
 namespace Midterm_Project
 {
     public class Final_Project
     {
+        /// <summary>
+        /// /
+        /// </summary>
+        /// <param name="args"></param>
         public static void Main(string[] args)
         {
-            var database = DataBaseReader.LoadDatabase("File.txt");
+            var database = DataBaseReader.LoadDatabase("AudioDatabase.csv");
             
             while (true)
             {
@@ -23,6 +29,9 @@ namespace Midterm_Project
                 Console.WriteLine("7. Sort entries by year (Ascending)");
                 Console.WriteLine("8. Sort entries by title (Alphabetically)");
                 Console.WriteLine("9. Print entries from a given year onward");
+                Console.WriteLine("10. Add to Database");
+                Console.WriteLine("11. Remove from Database");
+                Console.WriteLine("12. Play Audio");
                 Console.WriteLine("0. Quit");
                 Console.Write("\nEnter your choice: ");
 
@@ -56,6 +65,15 @@ namespace Midterm_Project
                         break;
                     case "9":
                         PrintEntriesFromYear(database);
+                        break;
+                    case "10":
+                        AddEntry(database);
+                        break;
+                    case "11":
+                        RemoveEntry(database);
+                        break;
+                    case "12":
+                        PlayAudio(database);
                         break;
                     case "0":
                         Console.WriteLine("Goodbye!");
@@ -123,11 +141,11 @@ namespace Midterm_Project
             var sortedList = database.OrderByDescending(item =>
             {
                 if (item is Track track)
-                    return track.Rating;  // Track uses Rating (decimal)
+                    return track.Rating;  // Track uses Rating (double)
                 if (item is AudioBook audiobook)
                     return audiobook.ThumbsUp;  // AudioBook uses thumbs up/down for rating
                 if (item is Podcast podcast)
-                    return podcast.ThumbsUp;  // Podcast uses ThumbsUp as the rating
+                    return podcast.Rating;  // Podcast uses 1-10 as the rating
                 return 0;
             }).ToList();  // Convert back to List after sorting
 
@@ -201,5 +219,147 @@ namespace Midterm_Project
                 Console.WriteLine("Invalid year entered.");
             }
         }
+
+        //Stretch Goal 1
+        static void AddEntry(List<object> database)
+        {
+            
+            using StreamWriter writer = new StreamWriter("AudioDatabase.csv", append: true);
+            
+            Console.Clear();
+            Console.WriteLine("\tWhat Would You Like to Add?");
+            Console.WriteLine("1 - Track\n2 - Audio Book\n3 - Podcast");
+            switch(Console.ReadLine())
+            {
+                case "1":
+                    Console.WriteLine("Whats the Title?");
+                    string title = Console.ReadLine();
+                    Console.WriteLine("By Who?");
+                    string artist = Console.ReadLine();
+                    Console.WriteLine("In what Album?");
+                    string album = Console.ReadLine();
+                    Console.WriteLine("What Year was it Made?");
+                    int year = int.Parse(Console.ReadLine());
+                    Console.WriteLine("Duration in Minutes?");
+                    int dur = int.Parse(Console.ReadLine());
+                    Console.WriteLine("Rating?");
+                    double onefive = double.Parse(Console.ReadLine());
+                    Console.WriteLine("Mp3 Name?");
+                    string sound = Console.ReadLine();
+                    database.Add(new Track(title, artist, album, year, dur, onefive, sound));
+                    writer.WriteLine($"Track:,{title},{artist},{album},{year},{dur},{onefive},{sound}");
+                    break;
+                case "2":
+                    Console.WriteLine("Whats the Title?");
+                    title = Console.ReadLine();
+                    Console.WriteLine("By Who?");
+                    artist = Console.ReadLine();
+                    Console.WriteLine("What Year was it Made?");
+                    year = int.Parse(Console.ReadLine());
+                    Console.WriteLine("Duration in Minutes?");
+                    dur = int.Parse(Console.ReadLine());
+                    Console.WriteLine("Rating?\nHow Many Thumbs Up? :)");
+                    int thumbsUp = int.Parse(Console.ReadLine());
+                    Console.WriteLine("How Many Thumbs Down? :(");
+                    int thumbsDown = int.Parse(Console.ReadLine());
+                    database.Add(new AudioBook(title, artist, year, dur, thumbsUp, thumbsDown));
+                    writer.WriteLine($"AudioBook:,{title},{artist},{year},{dur},{thumbsUp},{thumbsDown}");
+                    break;
+                case "3":
+                    Console.WriteLine("Whats the Title?");
+                    title = Console.ReadLine();
+                    Console.WriteLine("By Who?");
+                    artist = Console.ReadLine();
+                    Console.WriteLine("What Year was it Made?");
+                    year = int.Parse(Console.ReadLine());
+                    Console.WriteLine("Duration in Minutes?");
+                    dur = int.Parse(Console.ReadLine());
+                    Console.WriteLine("Rating?");
+                    int oneten = int.Parse(Console.ReadLine());
+                    database.Add(new Podcast(title, artist, year, dur, oneten));
+                    writer.WriteLine($"Podcast:,{title},{artist},{year},{dur},{oneten}");
+                    break;
+                default:
+                    Console.WriteLine("Invaild; Choose 1-3");
+                    break;
+            }
+            Console.WriteLine("Successfully Added!!!");
+
+        }
+
+        static void RemoveEntry(List<object> database)
+        {
+            Console.Clear();
+            
+            for (int i = 1; i <= database.Count; i++)
+            {
+                Console.WriteLine($"{i}: {database[i-1]}");
+            }
+            Console.WriteLine("What would you like to remove?");
+            database.RemoveAt(int.Parse(Console.ReadLine())-1);
+            Console.WriteLine("Successfully Removed!");
+            DataBaseUpdate(database);
+        }
+
+        static void DataBaseUpdate(List<object> database)
+        {
+            using StreamWriter update = new StreamWriter("AudioDatabase.csv");
+            foreach (var item in database)
+            {
+               
+                        if (item is Track track)
+                        {
+                            update.WriteLine($"Track:, {track.Title}, {track.Artist}, {track.Album}, {track.Year}, {track.Duration}, {track.Rating}");
+                        }
+
+                        if (item is AudioBook book)
+                        {
+                            update.WriteLine($"AudioBook:, {book.Title}, {book.Author}, {book.Year}, {book.Duration}, {book.ThumbsUp}, {book.ThumbsDown}");
+                        }
+                       
+                        if (item is Podcast podcast)
+                        {
+                            update.WriteLine($"Podcast:, {podcast.Title}, {podcast.Creator}, {podcast.Year}, {podcast.Duration}, {podcast.Rating}");
+                        }
+                        
+                
+            }
+            
+        }
+
+        static void PlayAudio(List<object> database)
+        {
+            Console.Clear();
+            WindowsMediaPlayer sound = new WindowsMediaPlayer();
+            int j = 1;
+            for (int i = 0; i < database.Count; i++)
+            {
+                if (database[i] is Track track)
+                {
+                    Console.WriteLine($"{j}: {database[i]}");
+                    j++;
+                }
+            }
+            Console.WriteLine("What would you like to Play?");
+            object playing = database[int.Parse(Console.ReadLine()) - 1];
+            if (playing is Track t)
+            {
+                sound.URL = t.Sound;
+                Console.WriteLine($"Playing {t.Title} by {t.Artist}");
+            }
+            sound.controls.play();
+
+
+            Console.WriteLine("Press 1 to Stop");
+            if(Console.ReadLine() == "1")
+            {
+                sound.controls.stop();
+            }
+            
+            
+
+
+        }
+
     }
 }
